@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 
 #include <conio.h>
 
@@ -7,6 +7,8 @@
 #include <stdlib.h>
 
 #include <time.h>
+
+#include <vector>
 
 
 #define LEFT 75
@@ -17,6 +19,10 @@
 
 #define DOWN 80
 
+using namespace std;
+
+vector<pair<int, int> > arr;
+int PosX = 0, PosY = 3;
 
 //해당 위치로 콘솔 이동. 
 void gotoxy(int x, int y) {
@@ -34,23 +40,54 @@ void CursorView(char show) {
     SetConsoleCursorInfo(hConsole, &ConsoleCursor);
 }
 
+void BlockMove() {
+	int i;
+	
+	for(i = 0; i < arr.size(); i++) {
+		arr[i].first -= 2;
+		
+		if(arr[i].first < 0) {
+			gotoxy(0, arr[i].second);
+			printf("  ");
+			arr.erase(arr.begin());
+		}
+		else {
+			gotoxy(arr[i].first + 2, arr[i].second);
+			printf("  ");
+			
+			gotoxy(arr[i].first, arr[i].second);
+			printf("☆");
+		}
+	}
+}
+
+void MakeBlock() {
+	srand(time(NULL));
+	
+	int a = rand() % 5 + 1;
+	
+	arr.push_back({30, a});
+	
+	BlockMove();
+}
+
 //맵 테투리 그리기. 
 void DrawMap() {
 	gotoxy(0, 0);
-	int i = 0, Length = 20;
+	int i = 0, Length = 15;
 	for(i = 0; i <= Length; i++) {
 		printf("▩");
 	}
 	
-	gotoxy(40, 1);
+	gotoxy(30, 1);
 	printf("■");
-	gotoxy(40, 2);
+	gotoxy(30, 2);
 	printf("■");
-	gotoxy(40, 3);
+	gotoxy(30, 3);
 	printf("■");
-	gotoxy(40, 4);
+	gotoxy(30, 4);
 	printf("■");
-	gotoxy(40, 5);
+	gotoxy(30, 5);
 	printf("■");
 	
 	gotoxy(0, 6);
@@ -59,16 +96,26 @@ void DrawMap() {
 	}
 }
 
+void Check() {
+	int i;
+	for(i = 0; i < arr.size(); i++) {
+		if(arr[i].first == PosX && arr[i].second == PosY) {
+			exit(0);
+		}
+	}
+}
+
 int main() {
-	int PosX = 0, PosY = 3, a;
+	int a, delay = 0, SpawnDelay = 50;
 	
 	CursorView(0);
 	DrawMap();
 	
 	gotoxy(PosX, PosY);
 	printf("♡");
-		
+			
 	while(1) {
+		Sleep(1);
 		if(kbhit()) {
 			
 			a = getch();
@@ -89,8 +136,15 @@ int main() {
 			gotoxy(PosX, PosY);
 			printf("♡");
 		}
-	}
 		
+		Check();
+		
+		delay++;
+		if(delay >= SpawnDelay) {
+			delay = 0;
+			MakeBlock();
+		}
+	}
 	
 	return 0;
 }

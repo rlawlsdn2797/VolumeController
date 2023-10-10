@@ -18,6 +18,8 @@ vector<int> type;
 int PosX = 0, PosY = 3;
 int Score = 20;
 
+bool GameOver = false;
+
 //해당 위치로 콘솔 이동. 
 void gotoxy(int x, int y) {
     COORD pos = { x, y };
@@ -106,6 +108,10 @@ void Check() {
 		if(arr[i].first == PosX && arr[i].second == PosY) {
 			if(type[i] == 1) {
 				Score += 5;
+				
+				if(Score == 100) {
+					GameOver = true;
+				}
 			}
 			else if(type[i] == 2) {
 				Score -= 5;
@@ -134,9 +140,9 @@ int main() {
 	printf("♡");
 	
 	gotoxy(0, 7);
-	printf("Volume : %3d", Score);
+	printf("Volume : %3d%%", Score);
 			
-	while(1) {
+	while(!GameOver) {
 		Sleep(1);
 		if(kbhit()) {
 			
@@ -161,12 +167,16 @@ int main() {
 		
 		Check();
 		
+		SpawnDelay = 5 + (100 - Score) / 5;
+		
 		delay++;
 		if(delay >= SpawnDelay) {
 			delay = 0;
 			MakeBlock();
 		}
 	}
+	
+	gotoxy(0, 10);
 	
 	return 0;
 }

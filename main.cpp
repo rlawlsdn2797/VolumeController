@@ -85,17 +85,6 @@ void DrawMap() {
 		printf("в╠");
 	}
 	
-	gotoxy(30, 1);
-	printf("бс");
-	gotoxy(30, 2);
-	printf("бс");
-	gotoxy(30, 3);
-	printf("бс");
-	gotoxy(30, 4);
-	printf("бс");
-	gotoxy(30, 5);
-	printf("бс");
-	
 	gotoxy(0, 6);
 	for(i = 0; i <= Length; i++) {
 		printf("в╠");
@@ -107,14 +96,14 @@ void Check() {
 	for(i = 0; i < arr.size(); i++) {
 		if(arr[i].first == PosX && arr[i].second == PosY) {
 			if(type[i] == 1) {
-				Score += 5;
+				Score += 2;
 				
 				if(Score == 100) {
 					GameOver = true;
 				}
 			}
 			else if(type[i] == 2) {
-				Score -= 5;
+				Score -= 2;
 				
 				if(Score < 0) Score = 0;
 			}
@@ -141,6 +130,8 @@ int main() {
 	
 	gotoxy(0, 7);
 	printf("Volume : %3d%%", Score);
+	
+	SetConsoleTitle("VolumeController");
 			
 	while(!GameOver) {
 		Sleep(1);
@@ -157,9 +148,9 @@ int main() {
 			if(a == DOWN) PosY++;
 			 
 			if(PosX < 0) PosX = 0;
-			if(PosX > 38) PosX = 38;
+			if(PosX > 28) PosX = 28;
 			if(PosY < 1) PosY = 1;
-			if(PosY > 5) PosY = 5; 
+			if(PosY > 5) PosY = 5;
 			
 			gotoxy(PosX, PosY);
 			printf("в╜");
@@ -167,7 +158,7 @@ int main() {
 		
 		Check();
 		
-		SpawnDelay = 5 + (100 - Score) / 5;
+		SpawnDelay = 10 + (100 - Score) / 5;
 		
 		delay++;
 		if(delay >= SpawnDelay) {

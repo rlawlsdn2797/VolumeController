@@ -1,28 +1,22 @@
 #include <iostream>
-
 #include <conio.h>
-
 #include <windows.h>
-
 #include <stdlib.h>
-
 #include <time.h>
-
 #include <vector>
 
 
 #define LEFT 75
-
 #define RIGHT 77
-
 #define UP 72
-
 #define DOWN 80
 
 using namespace std;
 
 vector<pair<int, int> > arr;
+vector<int> type;
 int PosX = 0, PosY = 3;
+int Score = 20;
 
 //해당 위치로 콘솔 이동. 
 void gotoxy(int x, int y) {
@@ -50,23 +44,33 @@ void BlockMove() {
 			gotoxy(0, arr[i].second);
 			printf("  ");
 			arr.erase(arr.begin());
+			type.erase(type.begin());
 		}
 		else {
 			gotoxy(arr[i].first + 2, arr[i].second);
 			printf("  ");
 			
 			gotoxy(arr[i].first, arr[i].second);
-			printf("☆");
+			
+			if(type[i] == 1) {
+				printf("＋");
+			}
+			else if(type[i] == 2) {
+				printf("－");
+			}
+			else if(type[i] == 3) {
+				printf("×");
+			}
 		}
 	}
+	
+	gotoxy(PosX, PosY);
+	printf("♡");
 }
 
-void MakeBlock() {
-	srand(time(NULL));
-	
-	int a = rand() % 5 + 1;
-	
-	arr.push_back({30, a});
+void MakeBlock() {	
+	arr.push_back({30, rand() % 5 + 1});
+	type.push_back(rand() % 3 + 1);
 	
 	BlockMove();
 }
@@ -100,19 +104,37 @@ void Check() {
 	int i;
 	for(i = 0; i < arr.size(); i++) {
 		if(arr[i].first == PosX && arr[i].second == PosY) {
-			exit(0);
+			if(type[i] == 1) {
+				Score += 5;
+			}
+			else if(type[i] == 2) {
+				Score -= 5;
+				
+				if(Score < 0) Score = 0;
+			}
+			else if(type[i] == 3){
+				Score = 0;
+			}
+			
+			type[i] = 0;
 		}
 	}
+	
+	gotoxy(0, 7);
+	printf("Volume : %3d", Score);
 }
 
 int main() {
-	int a, delay = 0, SpawnDelay = 50;
+	int a, delay = 0, SpawnDelay = 25;
 	
 	CursorView(0);
 	DrawMap();
 	
 	gotoxy(PosX, PosY);
 	printf("♡");
+	
+	gotoxy(0, 7);
+	printf("Volume : %3d", Score);
 			
 	while(1) {
 		Sleep(1);

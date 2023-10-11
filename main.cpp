@@ -17,6 +17,8 @@ vector<int> type;
 int PosX = 0, PosY = 3;
 int Score = 20;
 
+HANDLE hConsole;
+
 bool GameOver = false;
 
 //해당 위치로 콘솔 이동. 
@@ -49,23 +51,28 @@ void BlockMove() {
 			type.erase(type.begin());
 		}
 		else {
+			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 			gotoxy(arr[i].first + 2, arr[i].second);
 			printf("  ");
 			
 			gotoxy(arr[i].first, arr[i].second);
 			
 			if(type[i] == 1 || type[i] == 4) {
+    			SetConsoleTextAttribute(hConsole, BACKGROUND_GREEN);
 				printf("＋");
 			}
 			else if(type[i] == 2) {
+    			SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE);
 				printf("－");
 			}
 			else if(type[i] == 3) {
+    			SetConsoleTextAttribute(hConsole, BACKGROUND_RED);
 				printf("×");
 			}
 		}
 	}
 	
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	gotoxy(PosX, PosY);
 	printf("♡");
 }
@@ -81,7 +88,7 @@ void MakeBlock() {
 //맵 테투리 그리기. 
 void DrawMap() {
 	gotoxy(0, 0);
-	int i = 0, Length = 15;
+	int i = 0, Length = 14;
 	for(i = 0; i <= Length; i++) {
 		printf("▩");
 	}
@@ -134,12 +141,13 @@ int main() {
 	printf("Volume : %3d%%", Score);
 	
 	SetConsoleTitle("VolumeController");
-				
+	
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
 	//GameOver가 True가 되면 while문 종료. 
 	while(!GameOver) {
 		Sleep(1);
 		if(kbhit()) {
-			
 			a = getch();
 			
 			gotoxy(PosX, PosY);

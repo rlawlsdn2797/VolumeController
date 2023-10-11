@@ -5,7 +5,6 @@
 #include <time.h>
 #include <vector>
 
-
 #define LEFT 75
 #define RIGHT 77
 #define UP 72
@@ -36,6 +35,7 @@ void CursorView(char show) {
     SetConsoleCursorInfo(hConsole, &ConsoleCursor);
 }
 
+//블럭 움직이기. 
 void BlockMove() {
 	int i;
 	
@@ -54,7 +54,7 @@ void BlockMove() {
 			
 			gotoxy(arr[i].first, arr[i].second);
 			
-			if(type[i] == 1) {
+			if(type[i] == 1 || type[i] == 4) {
 				printf("＋");
 			}
 			else if(type[i] == 2) {
@@ -70,9 +70,10 @@ void BlockMove() {
 	printf("♡");
 }
 
+//블럭 생성하기. 
 void MakeBlock() {	
 	arr.push_back({30, rand() % 5 + 1});
-	type.push_back(rand() % 3 + 1);
+	type.push_back(rand() % 4 + 1);
 	
 	BlockMove();
 }
@@ -91,11 +92,12 @@ void DrawMap() {
 	}
 }
 
+//캐릭터가 블럭과 닿았는지 확인하기 
 void Check() {
 	int i;
 	for(i = 0; i < arr.size(); i++) {
 		if(arr[i].first == PosX && arr[i].second == PosY) {
-			if(type[i] == 1) {
+			if(type[i] == 1 || type[i] == 4) {
 				Score += 2;
 				
 				if(Score == 100) {
@@ -115,7 +117,7 @@ void Check() {
 		}
 	}
 	
-	gotoxy(0, 7);
+	gotoxy(20, 7);
 	printf("Volume : %3d", Score);
 }
 
@@ -128,11 +130,12 @@ int main() {
 	gotoxy(PosX, PosY);
 	printf("♡");
 	
-	gotoxy(0, 7);
+	gotoxy(20, 7);
 	printf("Volume : %3d%%", Score);
 	
 	SetConsoleTitle("VolumeController");
-			
+				
+	//GameOver가 True가 되면 while문 종료. 
 	while(!GameOver) {
 		Sleep(1);
 		if(kbhit()) {
